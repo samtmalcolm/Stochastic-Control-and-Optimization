@@ -1,0 +1,186 @@
+---
+title: "MIS 381N Homework 1"
+author: "Sam Malcolm (stm2334)"
+output:
+  pdf_document: default
+---
+# Problem 1
+
+We know that $(AB)^{-1} = B^{-1}A^{-1}$ so we also know that $(AB)^T = B^TA^T$.
+
+We also know that the multiplicative identity $I$ aka $AA^{-1}$ is symmetric, so $I^T = I$.
+
+By setting $B = A^T$ and multiplying to each side, we see:
+
+\begin{align}
+(A^{-1})^{T}\times A^{T} &= (A^{T})^{-1}\times A^{T}\\
+(AA^{-1})^{T} &= I\\
+I^{T} &= I\\
+I &= I\\
+\end{align}
+
+This proves that $(A^{-1})^{T} = (A^{T})^{-1}$.
+
+# Problem 2
+
+There are four different types of loans - First mortgage, Second mortgage, Home improvement, Personal overdraft - which are represented respectively by $x_{1}$,$x_{2}$,$x_{3}$,and $x_{4}$ . 
+
+Based on the given information, we know that:
+\begin{equation}
+  \begin{cases}
+  x_{1} + x_{2} + x_{3} + x_{4} &= 250,000,000\\
+  0.45x_{1} - 0.55x_{2}&=0\\
+  x_{2} &= 62,500,000\\
+  0.14x_{1} + 0.2x_{2} + 0.2x_{3} + 0.1x_{4} &= 150,000,000\\
+  \end{cases}
+\end{equation}
+
+We can use this to create three matrices:
+
+\begin{equation}
+A = 
+  \begin{bmatrix}
+  1 & 1 & 1 & 1 \\
+  .45 & -.55 & 0 & 0 \\
+  0 & 1 & 0 & 0 \\
+  0.14 & 0.2 & 0.2 & 0.1 \\
+  \end{bmatrix},
+\quad
+\textbf{x} = 
+  \begin{bmatrix}
+  x_{1}\\
+  x_{2}\\
+  x_{3}\\
+  x_{4}\\
+  \end{bmatrix},
+\quad
+\textbf{y} = 
+  \begin{bmatrix}
+  250,000,000\\
+  0\\
+  62,500,000\\
+  37,500,000\\
+  \end{bmatrix}
+\end{equation}
+
+We can then solve for the four loan amounts by setting $A\textbf{x} = \textbf{y}$ aka $\textbf{x} = A^{-1}\textbf{y}$.
+```{r}
+y = c(250000000,0,62500000,37500000)
+A = matrix(c(1,.45,0,.14,1,-.55,1,.2,1,0,0,.2,1,0,0,.1),4,4) 
+x = solve(A,y)
+x_mat = matrix(c(x),4,1)
+print(x_mat)
+```
+
+# Problem 3
+
+We want to choose  $x_{1}$,$x_{2}$,$x_{3}$,$x_{4}$
+
+to maximize
+
+\[
+1.5x_{1} + 2.5x_{2} + 3x_{3} + 4.5x_{4}
+\]
+
+subject to the constraints
+
+\begin{equation}
+  \begin{cases}
+  2x_{1} + 4x_{2} + 3x_{3} + 7x_{4} &\leq 100000\\
+  3x_{1} + 2x_{2} + 3x_{3} + 4x_{4} &\leq 50000\\
+  2x_{1} + 3x_{2} + 2x_{3} + 5x_{4} &\leq 60000\\
+  x_{1},x_{2},x_{3},x_{4} &\geq 0\\
+  \end{cases}
+\end{equation}
+
+In matrix notation, we can set this up as:
+
+\begin{equation}
+\textbf{x} = 
+  \begin{bmatrix}
+  x_{1}\\
+  x_{2}\\
+  x_{3}\\
+  x_{4}\\
+  \end{bmatrix},
+\quad
+\textbf{C} = 
+  \begin{bmatrix}
+  1.5\\
+  2.5\\
+  3\\
+  4.5\\
+  \end{bmatrix},
+\quad
+A = 
+  \begin{bmatrix}
+  2 & 4 & 3 & 7 \\
+  3 & 2 & 3 & 4 \\
+  2 & 3 & 2 & 5 \\
+  \end{bmatrix},
+\quad
+\textbf{b} = 
+  \begin{bmatrix}
+  100,000\\
+  50,000\\
+  60,000\\
+  \end{bmatrix}
+\end{equation}
+
+We can then maximize $\textbf{C}^{T}\textbf{x}$ subject to $A\textbf{x} \leq \textbf{b}$ and ${x} \geq 0$
+
+# Problem 4
+
+## Part a
+
+```{r}
+A = matrix(nrow=20, ncol=20)
+A[1,1] = 1
+for(j in 1:20){
+   for(i in 1:20){
+     if (j > i){
+        A[i,j] = i/j
+      }
+     else if (j == i){
+       A[i,j] = i/j
+      }
+     else{
+       A[i,j] = j/i
+     }
+   }
+}
+A
+```
+
+## Part b
+
+```{r}
+all.equal(t(A),A)
+```
+
+## Part c
+
+```{r}
+C = solve(A)
+C
+```
+```{r}
+ident = diag(20)
+product = A%*%C
+all.equal(product, ident)
+```
+
+## Part d
+
+```{r}
+d = c(1,2,3,4,5,6,7,8,9,10,10,9,8,7,6,5,4,3,2,1)
+d
+```
+
+## Part e
+
+```{r}
+x = solve(A, C%*%d)
+x
+```
+
